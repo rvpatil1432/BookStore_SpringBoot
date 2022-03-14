@@ -1,70 +1,54 @@
 package com.bridgelabz.bookstorebackend.controller;
 
-import com.bridgelabz.bookstorebackend.dto.ResponseDTO;
-import com.bridgelabz.bookstorebackend.dto.UserDTO;
-import com.bridgelabz.bookstorebackend.entity.User;
-import com.bridgelabz.bookstorebackend.service.UserService;
+import com.bridgelabz.bookstorebackend.dto.ForgotPasswordDTO;
+import com.bridgelabz.bookstorebackend.dto.LoginDTO;
+import com.bridgelabz.bookstorebackend.dto.RegisterUserDTO;
+import com.bridgelabz.bookstorebackend.dto.ResetPasswordDTO;
+import com.bridgelabz.bookstorebackend.service.IUserService;
+import com.bridgelabz.bookstorebackend.utility.Response;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "http://localhost:4200")
+import javax.mail.MessagingException;
+import java.io.UnsupportedEncodingException;
+
 @RestController
-@RequestMapping("/bookStore/user")
+@CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
 
-    @Autowired
-    UserService userService;
+	@Autowired
+	private IUserService userService;
 
-    /**
-     * Purpose : To add user details in BookStore database While Registration process
-     */
+	// login API
+	@PostMapping("/user/login")
+	public Response login(@RequestBody LoginDTO loginDto) {
+		return userService.loginUserByEmail(loginDto);
+	}
 
-    @PostMapping(value = "/addUserDetails")
-    public ResponseEntity<ResponseDTO> addUserDetails(@RequestBody UserDTO userDTO) {
-        UserDTO addData = userService.addUser(userDTO);
-        ResponseDTO responseDTO = new ResponseDTO("Added newUser Details", addData);
-        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+	// registration API
+	@PostMapping("/registeruser")
+	public Response registerUser(@RequestBody RegisterUserDTO registerDto) {
+		System.out.println("Register DTO printed" + registerDto);
+		return userService.saveNewUser(registerDto);
+	}
 
-    }
+	// verify user API
+	@GetMapping("/user/verify")
+	public Object validateUser(@RequestParam String token) throws UnsupportedEncodingException {
+		return userService.verifyUser(token);
+	}
 
-    /**
-     * Purpose : To check user details from BookStore database While Login process
-     */
+	// forgot password API
+	@PostMapping("/user/forgot_password")
+	public Response forgotPassword(@RequestBody ForgotPasswordDTO forgotPassword) throws MessagingException{
+		return userService.forgotPassword(forgotPassword);
+	}
 
-    @PostMapping(value = "/getUserDetails")
-    public ResponseEntity<ResponseDTO> getUserDetails(@RequestBody UserDTO userData) throws Exception {
-        String email = userData.getEmail();
-        String password = userData.getPassword();
-        User contactList = null;
-        if (email != null && password != null) {
-            contactList = userService.getUserContact(email, password);
-        }
-        if(contactList == null) {
-            throw new Exception("Error Occured");
-        }
-        ResponseDTO responseDTO = new ResponseDTO("Fetched user Details",contactList);
-        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
-    }
-
-
-
-    @PutMapping(value = "/updateUserDetails")
-    public ResponseEntity<ResponseDTO> updateUserDetails(@RequestParam(name = "id") int id,
-                                                         @RequestBody UserDTO userDTO) {
-        UserDTO updatedUserData = userService.updateUser(id , userDTO);
-        ResponseDTO responseDTO = new ResponseDTO("Updated by ID : User Details", updatedUserData);
-        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
-
-    }
-
-    @DeleteMapping(value = "/deleteUserDetails")
-    public ResponseEntity<ResponseDTO> deleteUserDetails(@RequestParam(name = "id") int id) {
-        userService.deleteUser(id);
-        ResponseDTO responseDTO = new ResponseDTO("Deleted by ID : User Details", null);
-        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
-
-    }
+	// reset password API
+	@PutMapping("/user/reset_password/{token}")
+	public Response resetUserPassword(@RequestBody ResetPasswordDTO resetPassword, @PathVariable String token) {
+		return userService.resetPassword(resetPassword, token);
+	}
+	
+	//Delete user API
 }
-

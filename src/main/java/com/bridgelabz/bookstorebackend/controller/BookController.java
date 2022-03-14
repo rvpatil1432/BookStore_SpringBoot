@@ -3,13 +3,12 @@ package com.bridgelabz.bookstorebackend.controller;
 import com.bridgelabz.bookstorebackend.dto.BookDTO;
 import com.bridgelabz.bookstorebackend.dto.ResponseDTO;
 import com.bridgelabz.bookstorebackend.service.BookService;
+import com.bridgelabz.bookstorebackend.utility.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
@@ -20,47 +19,38 @@ public class BookController {
     @Autowired
     BookService bookService;
 
+    /*
+    Purpose : To add book details in bookstore database.
+     */
     @PostMapping(value = "/addBookDetails")
-    public ResponseEntity<ResponseDTO> addBookDetails(@RequestBody BookDTO bookDTO) {
-        BookDTO addData = bookService.addBook(bookDTO);
-        ResponseDTO responseDTO = new ResponseDTO("Added newBook Details", addData);
-        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
-
+    public Response addBookDetails(@RequestBody BookDTO bookDTO, @RequestHeader String token) {
+        return bookService.addBook(bookDTO,token);
     }
 
-    @GetMapping(value = "/getBookDetails")
-    public ResponseEntity<ResponseDTO> getBookDetails() {
-        List<BookDTO> bookData = bookService.getBook();
-        ResponseDTO responseDTO = new ResponseDTO("Fetched All Book Details", bookData);
-        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
-
+    /*
+   Purpose : To get the all book details from bookstore database.
+    */
+    @GetMapping("/getBookDetails")
+    public Response getBookDetails(@RequestHeader String token) {
+        return bookService.getBook(token);
     }
 
+    /*
+   Purpose : To edit book details in bookstore database.
+    */
     @PutMapping(value = "/updateBookDetails")
-    public ResponseEntity<ResponseDTO> updateBookDetails(@RequestParam(name = "id") int id,
-                                                         @RequestBody BookDTO bookDTO) {
-        BookDTO updatedBookData = bookService.updateBook(id , bookDTO);
-        ResponseDTO responseDTO = new ResponseDTO("Updated by ID : Book Details", updatedBookData);
-        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
-
+    public Response updateBookDetails(@RequestBody BookDTO bookDTO, @RequestParam long id, @RequestHeader String token) {
+        return bookService.updateBook(bookDTO,id,token);
     }
 
+    /*
+  Purpose : To delete book details in bookstore database.
+   */
     @DeleteMapping(value = "/deleteBookDetails")
-    public ResponseEntity<ResponseDTO> deleteBookDetails(@RequestParam(name = "id") int id) {
-        bookService.deleteBook(id);
-        ResponseDTO responseDTO = new ResponseDTO("Deleted by ID : Book Details", null);
-        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
-
+    public Response deleteBookDetails(@RequestParam long bookId, @RequestHeader String token) {
+        return bookService.deleteBook(bookId, token);
     }
 
-    @GetMapping(value = "/getBookDetailsByID")
-    public ResponseEntity<ResponseDTO> getBookDetailsByID(@RequestParam(name = "id") int id) {
-        log.info("getBookDetailsByID");
-        log.info(String.valueOf(id));
-        BookDTO bookDTO = bookService.getBookByID(id);
-        ResponseDTO responseDTO = new ResponseDTO("Fetched by ID : Book Details", bookDTO);
-        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
-    }
 
 }
 

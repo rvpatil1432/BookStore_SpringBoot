@@ -1,17 +1,21 @@
 package com.bridgelabz.bookstorebackend.service;
 
-import com.bridgelabz.bookstorebackend.dto.UserDTO;
-import com.bridgelabz.bookstorebackend.entity.User;
-import java.util.List;
+import com.bridgelabz.bookstorebackend.dto.ForgotPasswordDTO;
+import com.bridgelabz.bookstorebackend.dto.LoginDTO;
+import com.bridgelabz.bookstorebackend.dto.RegisterUserDTO;
+import com.bridgelabz.bookstorebackend.dto.ResetPasswordDTO;
+import com.bridgelabz.bookstorebackend.utility.Response;
 
 public interface IUserService {
-    UserDTO addUser(UserDTO userDTO);
 
-    List<UserDTO> getUserDetails();
+	Response loginUserByEmail(LoginDTO loginDTO); // Login user by mail
 
-    UserDTO updateUser(int id, UserDTO userDTO);
+	Response saveNewUser(RegisterUserDTO registrationDto); // Registration
 
-    void deleteUser(int id);
+	Object verifyUser(String token); // Verify user using token
 
-    User getUserContact(String email, String password);
+	Response resetPassword(ResetPasswordDTO resetPassword, String token); // Reset Password
+
+	Response forgotPassword(ForgotPasswordDTO forgotPassword); // Forget Password
+
 }

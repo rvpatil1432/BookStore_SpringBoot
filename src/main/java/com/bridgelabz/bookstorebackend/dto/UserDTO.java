@@ -9,6 +9,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserDTO {
 
+    private String name;
+    private String username;
+    private String Kyc;
+    private String dataOfBirth;
+    private int otp;
+    private String Email;
+    private String Password;
+/*
     private int id;
 
     private String userName;
@@ -19,6 +27,6 @@ public class UserDTO {
     private String password;
     private String city;
     private String state;
-    private String type;
+    private String type;*/
 
 }

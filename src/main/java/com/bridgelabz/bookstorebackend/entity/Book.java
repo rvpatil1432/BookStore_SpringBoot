@@ -1,11 +1,13 @@
 package com.bridgelabz.bookstorebackend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
 
 @Entity
 @Data
+@Table(name = "books")
 public class Book {
 
     @Id
@@ -20,4 +22,9 @@ public class Book {
 
     @Column(name = "image")
     private String image;
+
+    @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
+    @JoinColumn(name="user_id")
+    @JsonIgnore
+    private User user;
 }

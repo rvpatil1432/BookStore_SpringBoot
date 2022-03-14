@@ -1,14 +1,14 @@
 package com.bridgelabz.bookstorebackend.service;
 
 import com.bridgelabz.bookstorebackend.dto.BookDTO;
+import com.bridgelabz.bookstorebackend.utility.Response;
+
 import java.util.List;
 
 public interface IBookService {
 
-    BookDTO addBook(BookDTO bookDTO);
-    List<BookDTO> getBook();
-    BookDTO updateBook(int id, BookDTO bookDTO);
-    void deleteBook(int id);
-    BookDTO getBookByID(int id);
-
+    Response addBook(BookDTO bookDTO, String token);
+    Response getBook(String token);
+    Response updateBook(BookDTO bookDTO,long bookId,String token);
+    Response deleteBook(long bookId,String token);
 }
